@@ -1,7 +1,7 @@
 const mockMatchData = {
     "33": {
       matchInfo: {
-        number: "33rd",
+        number: "34",
         type: "T20",
         location: "Chennai",
         date: "2025-04-14",

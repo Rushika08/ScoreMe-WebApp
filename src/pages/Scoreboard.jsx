@@ -25,6 +25,12 @@ export default function ScoreboardPage() {
         bowlers={matchData.bowlers}
         lastBat={matchData.lastBat}
         reviews={matchData.reviews}
+        ads={{
+          top: false,
+          middle: true,
+          side: false,
+          bottom: true
+        }}
       />
     </div>
   );

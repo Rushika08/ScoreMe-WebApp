@@ -157,6 +157,15 @@ export default function Scoreboard({
 
       <div className="mt-4">
         <div className="text-right text-sm text-gray-600 mb-2">T20 CAREER</div>
+
+        <div className="my-4">
+          <div className="bg-yellow-100 border border-yellow-300 text-yellow-900 text-center py-4 rounded-md shadow-md">
+            {/* Replace this with actual ad component or script */}
+            <span className="font-semibold">Advertisement</span>
+            <div className="text-sm text-gray-700">Your Ad Here - 728x90</div>
+          </div>
+        </div>
+
         {batsmen.length > 0 && (
           <table className="w-full text-sm">
             <thead>
