@@ -23,6 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Ignore environment variable files
 .env
-.scoreme-4c29f-firebase-adminsdk-fbsvc-4522ba6bd5.json
-.src/firebaseDataLoading.py
+
+# Ignore Firebase service account key file
+scoreme-4c29f-firebase-adminsdk-fbsvc-4522ba6bd5.json
+
+# Ignore specific script if needed
+src/firebaseDataLoading.py
