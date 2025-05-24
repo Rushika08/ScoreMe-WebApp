@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { db, storage, auth } from "../firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function NewAdForm() {
   const [form, setForm] = useState({
@@ -16,7 +19,6 @@ export default function NewAdForm() {
 
   const displaySizes = ["300x250", "728x90", "160x600", "970x250"];
 
-  // Calculate and update price dynamically
   useEffect(() => {
     const calculatedPrice = calculatePrice(form.duration, form.size, form.type);
     setPrice(calculatedPrice);
@@ -24,40 +26,28 @@ export default function NewAdForm() {
 
   const calculatePrice = (duration, size, type) => {
     const basePricePerDay = 10;
-
     const sizeMultipliers = {
       "300x250": 1,
       "728x90": 1.5,
       "160x600": 1.8,
       "970x250": 2,
     };
-
     const typeMultiplier = {
       Image: 1,
       Video: 1.5,
     };
-
     const days = parseInt(duration) || 0;
-    const sizeFactor = sizeMultipliers[size] || 1;
-    const typeFactor = typeMultiplier[type] || 1;
-
-    return Math.round(days * basePricePerDay * sizeFactor * typeFactor);
+    return Math.round(days * basePricePerDay * sizeMultipliers[size] * typeMultiplier[type]);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-
+    setForm((prev) => ({ ...prev, [name]: value }));
     if (name === "type") {
       setForm((prev) => ({ ...prev, media: null }));
       setPreviewURL("");
       setShowPreview(false);
     }
-
-    if (name === "size") {
-      setShowPreview(false);
-    }
-
     setError("");
   };
 
@@ -95,7 +85,7 @@ export default function NewAdForm() {
     setShowPreview(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.title || !form.duration || !form.size || !form.media) {
@@ -103,8 +93,45 @@ export default function NewAdForm() {
       return;
     }
 
-    alert(`Proceeding to payment of ₹${price}...`);
-    // Payment gateway integration can go here
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        setError("You must be logged in to submit an ad.");
+        return;
+      }
+
+      const fileRef = ref(storage, `ads/${user.uid}/${Date.now()}_${form.media.name}`);
+      await uploadBytes(fileRef, form.media);
+      const downloadURL = await getDownloadURL(fileRef);
+
+      const adData = {
+        userId: user.uid,
+        title: form.title,
+        type: form.type,
+        duration: form.duration,
+        size: form.size,
+        mediaURL: downloadURL,
+        price,
+        visibility: true, // ✅ NEW: add visibility
+        createdAt: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, "ads"), adData);
+
+      alert("Ad submitted successfully!");
+      setForm({
+        title: "",
+        type: "Image",
+        duration: "",
+        size: "300x250",
+        media: null,
+      });
+      setPreviewURL("");
+      setShowPreview(false);
+    } catch (err) {
+      console.error("Error submitting ad:", err);
+      setError("Something went wrong. Try again.");
+    }
   };
 
   const getSizeStyle = () => {
@@ -145,7 +172,7 @@ export default function NewAdForm() {
       <input
         type="text"
         name="duration"
-        placeholder="Duration (e.g. 30 days)"
+        placeholder="Duration (in days)"
         className="w-full p-2 border border-gray-300 rounded"
         value={form.duration}
         onChange={handleChange}
@@ -171,12 +198,10 @@ export default function NewAdForm() {
         className="w-full p-2 border border-gray-300 rounded"
       />
 
-      {/* Price display */}
       <div className="text-right font-semibold text-blue-700">
-        Estimated Price: ₹{price}
+        Estimated Price: LKR {price}
       </div>
 
-      {/* Conditional preview section */}
       {showPreview && previewURL && (
         <div className="border p-3 rounded bg-gray-50">
           <p className="text-sm font-medium mb-2">Ad Preview ({form.size}):</p>
@@ -200,7 +225,6 @@ export default function NewAdForm() {
         </div>
       )}
 
-      {/* Buttons */}
       <div className="flex justify-between">
         <button
           type="button"
@@ -214,7 +238,7 @@ export default function NewAdForm() {
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Proceed to Payment
+          Submit Ad
         </button>
       </div>
     </form>

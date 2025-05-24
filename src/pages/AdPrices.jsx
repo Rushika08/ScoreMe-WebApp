@@ -4,25 +4,25 @@ export default function AdPrices() {
   const pricingOptions = [
     {
       title: "📹 Video Ads",
-      price: "₹2000 / 30 seconds",
+      price: "LKR 2000 / 30 seconds",
       description: "Engage your audience with rich media content. Discounts for longer durations.",
       bgColor: "bg-blue-50",
     },
     {
       title: "📸 Photo Ads",
-      price: "₹500 / photo",
+      price: "LKR 500 / photo",
       description: "Get noticed with eye-catching visuals. Displayed every 2 minutes.",
       bgColor: "bg-green-50",
     },
     {
       title: "🔁 Frequency",
-      price: "₹300 / extra daily display",
+      price: "LKR 300 / extra daily display",
       description: "Maximize impressions by increasing daily display frequency.",
       bgColor: "bg-yellow-50",
     },
     {
       title: "🖥️ Display Size",
-      price: "Full-screen: ₹1000/day, Banner: ₹600/day, Sidebar: ₹400/day",
+      price: "Full-screen: LKR 1000/day, Banner: LKR 600/day, Sidebar: LKR 400/day",
       description: "Choose how prominently your ad appears on screen.",
       bgColor: "bg-purple-50",
     },

@@ -1,4 +1,3 @@
-// AuthPage.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -6,7 +5,8 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase"; // 🔥 include Firestore DB
+import { doc, setDoc } from "firebase/firestore"; // 🔥 Firestore write
 import adAgencyImage from "../assets/ad_agency_scene_2.jpg";
 
 export default function AuthPage() {
@@ -57,7 +57,16 @@ export default function AuthPage() {
 
       try {
         setIsLoading(true);
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 🔥 Store user details in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          createdAt: new Date(),
+          role: "publisher" // or "admin", "viewer", etc.
+        });
+
         navigate("/dashboard");
       } catch (err) {
         setErrorMessage(err.message);

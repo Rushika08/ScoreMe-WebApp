@@ -6,6 +6,8 @@ import { auth } from "../firebase";
 import AdHistory from "../components/AdHistory";
 import NewAdForm from "../components/NewAdForm";
 import AccountDetails from "../components/AccountDetails";
+import UpcomingTournaments from "../components/upcomingTournaments";
+
 
 export default function AdDashboard() {
   const [activeTab, setActiveTab] = useState("history");
@@ -59,6 +61,15 @@ export default function AdDashboard() {
         <div className="flex justify-center mb-6 space-x-4">
           <button
             className={`px-6 py-2 rounded-full ${
+              activeTab === "tournaments" ? "bg-blue-600 text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setActiveTab("tournaments")}
+          >
+            Upcoming Tournaments
+          </button>
+
+          <button
+            className={`px-6 py-2 rounded-full ${
               activeTab === "history" ? "bg-blue-600 text-white" : "bg-gray-200"
             }`}
             onClick={() => setActiveTab("history")}
@@ -84,6 +95,7 @@ export default function AdDashboard() {
         </div>
 
         <div>
+          {activeTab === "tournaments" && <UpcomingTournaments />}
           {activeTab === "history" && <AdHistory />}
           {activeTab === "new" && <NewAdForm />}
           {activeTab === "account" && <AccountDetails />}

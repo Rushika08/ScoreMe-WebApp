@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env
+.scoreme-4c29f-firebase-adminsdk-fbsvc-4522ba6bd5.json
+.src/firebaseDataLoading.py

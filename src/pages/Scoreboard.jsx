@@ -26,9 +26,9 @@ export default function ScoreboardPage() {
         lastBat={matchData.lastBat}
         reviews={matchData.reviews}
         ads={{
-          top: false,
+          top: true,
           middle: true,
-          side: false,
+          side: true,
           bottom: true
         }}
       />
